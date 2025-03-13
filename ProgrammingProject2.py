@@ -1,12 +1,11 @@
 import math
 
-
 class Graph:
     """Creates an empty adjacency list called aList. This function uses a dictionary. You will be able to access the
         list per vertex by using v.
         V - A list of Vertices
         E - A list of Edges. This list needs to be a list of tuples.
-        directed - Controls whehther the graph is a digraph or not"""
+        directed - Controls whether the graph is a digraph or not"""
 
     def __init__(self, V, E, directed):
         self.aList = []
@@ -20,7 +19,7 @@ class Graph:
     """Creates an edge. If directed is true, only one direction will be added. If not, both directions will be added
         v1 - The first vertex that makes up the edge
         v2 - The second vertex that makes up the edge
-        directed - Controls whehther the graph is a digraph or not"""
+        directed - Controls whether the graph is a digraph or not"""
 
     def addEdge(self, v1, v2, directed):
         if not directed:
@@ -46,20 +45,34 @@ class Graph:
         return len(self.aList[v])
 
     def DFS(self, s):
+        for u in s:
+            u.color = "white"
+            u.pi = None
 
-    ##Implement DFS from the psuedocode given in the slides (s is the source you want to start with. You will need this for SCC)
+        time = 0
+        for u in s:
+            if u.color == "white":
+                self.DFSVisit(u)
+
 
     def DFSVisit(self, u):
-
-    ##Implement DFS Visit from the psuedocode given in the slides
+        time = time + 1
+        u.d = time
+        u.color = "grey"
+        for v in self.aList[u]:
+            if v.color == "white":
+                v.pi = u
+                self.DFSVisit(v)
+        u.color = "black"
+        time = time + 1
+        u.f = time
 
     def TopologicalSort(self):
 
-    ##Implement Topological Sort from the psuedocode given in the slides
 
     def Transpose(self):
 
-    ##Implement a Graph Transopose to be used in the Strongly Connected Components function
+    ##Implement a Graph Transpose to be used in the Strongly Connected Components function
 
     def SCC(self):
 
