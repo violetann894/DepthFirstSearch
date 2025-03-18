@@ -1,3 +1,5 @@
+import math
+
 class Node:
     """The constructor for the Node class creates a new Node object that holds information about the current state
         of the Node.
@@ -93,6 +95,7 @@ class Graph:
         self.pi = []
         self.d = []
         self.f = []
+        self.directed = directed
 
     """Creates an edge. If directed is true, only one direction will be added. If not, both directions will be added
         v1 - The first vertex that makes up the edge
@@ -140,7 +143,7 @@ class Graph:
             if self.color[u] == "white":
                 self.DFSVisit(u)
 
-    """Vists the vertex and explores the connected vertices to see where the algorithm can move next"""
+    """Visits the vertex and explores the connected vertices to see where the algorithm can move next"""
 
     def DFSVisit(self, u):
         self.time += 1
@@ -155,16 +158,55 @@ class Graph:
         self.f[u] = self.time
 
     """Runs DFS on the list and then creates a linked list of objects sorted in topological order
-    Returns: """
+       Returns: 
+            linkedList - The linked list of vertices with the head node being the slowest finishing vertex"""
     def TopologicalSort(self):
+        self.DFS(0)
+        linkedList = None
+        vertexAddedToList = []
+        addedToList = 0
+        smallestNumber = math.inf
+        fastestVertex = None
+        while addedToList < len(self.aList):
+            for i in range(len(self.aList)):
+                if smallestNumber > self.f[i] and self.f[i] not in vertexAddedToList:
+                    smallestNumber = self.f[i]
+                    fastestVertex = i
 
+            if linkedList is None:
+                linkedList = LinkedList(Node(fastestVertex))
+            else:
+                linkedList.listPrepend(fastestVertex)
+            addedToList += 1
+            vertexAddedToList.append(smallestNumber)
+            smallestNumber = math.inf
+            fastestVertex = None
 
+        return linkedList
 
-    """"""
-    #def Transpose(self):
-    ##Implement a Graph Transpose to be used in the Strongly Connected Components function
+    """Using the vertices and edges of the graph, creates the transpose of that graph
+       Returns: 
+            graphT - The transposed graph object"""
+    def Transpose(self):
+        V = []
+        for i in range(len(self.aList)):
+            V.append(i)
 
+        E = []
 
+        if self.directed:
+            for u in range(len(self.aList)):
+                for v in self.aList[u]:
+                    E.append((v,u))
+        else:
+            for u in range(len(self.aList)):
+                for v in self.aList[u]:
+                    if (u,v) not in E and (v,u) not in E:
+                        E.append((v,u))
+
+        graphT = Graph(V, E, self.directed)
+
+        return graphT
 
     """"""
     #def SCC(self):
@@ -186,3 +228,14 @@ if __name__ == "__main__":
     print(graph.d)
     print(graph.f)
     print(graph.pi)
+    print()
+
+    """
+    linkedList = graph.TopologicalSort()
+
+    print(graph.color)
+    print("Discovery times: ", graph.d)
+    print("Finishing times: ", graph.f)
+
+    linkedList.printLinkedList()
+    """
