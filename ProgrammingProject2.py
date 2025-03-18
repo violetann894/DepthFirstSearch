@@ -139,6 +139,7 @@ class Graph:
 
         """This actually begins the DFS algorithm"""
         self.time = 0
+        self.DFSVisit(s)
         for u in range(len(self.aList)):
             if self.color[u] == "white":
                 self.DFSVisit(u)
@@ -172,7 +173,6 @@ class Graph:
                 if smallestNumber > self.f[i] and self.f[i] not in vertexAddedToList:
                     smallestNumber = self.f[i]
                     fastestVertex = i
-
             if linkedList is None:
                 linkedList = LinkedList(Node(fastestVertex))
             else:
@@ -191,9 +191,7 @@ class Graph:
         V = []
         for i in range(len(self.aList)):
             V.append(i)
-
         E = []
-
         if self.directed:
             for u in range(len(self.aList)):
                 for v in self.aList[u]:
@@ -208,27 +206,56 @@ class Graph:
 
         return graphT
 
-    """"""
-    #def SCC(self):
-    ##Implement Strongly Connected Components from the psuedocode given in the slides
+    """SCC stands for Strongly Connected Components. """
+    def SCC(self):
+        self.DFS(0)
 
+        decreasingUF = []
+        slowestVertex = -1
 
+        while len(decreasingUF) < len(self.aList):
+            largestNumber = -1
+            for i in range(len(self.aList)):
+                if largestNumber < self.f[i] and i not in decreasingUF:
+                    largestNumber = self.f[i]
+                    slowestVertex = i
+            decreasingUF.append(slowestVertex)
+
+        graphT = self.Transpose()
+        graphT.DFS(decreasingUF[0])
+        for u in decreasingUF:
+            if graphT.color[u] == "white":
+                graphT.DFS(u)
+
+        StronglyConnected = []
+        tree = []
+        for i in range(len(graphT.pi)):
+            if graphT.pi[i] is None:
+                if len(tree) != 0:
+                    StronglyConnected.append(tree)
+                tree = []
+                tree.append(i)
+            else:
+                tree.append(i)
+        StronglyConnected.append(tree)
+
+        return StronglyConnected
 
 if __name__ == "__main__":
     V = [0, 1, 2, 3]
     E = [(0, 1), (0, 2), (1, 2), (1, 3), (2, 3)]
 
-    graph = Graph(V, E, False)
+    graph = Graph(V, E, True)
     graph.printGraph()
 
     print()
 
-    graph.DFS(1)
+    """graph.DFS(0)
     print(graph.color)
     print(graph.d)
     print(graph.f)
     print(graph.pi)
-    print()
+    print()"""
 
     """
     linkedList = graph.TopologicalSort()
@@ -239,3 +266,5 @@ if __name__ == "__main__":
 
     linkedList.printLinkedList()
     """
+
+    print(graph.SCC())
