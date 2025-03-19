@@ -254,7 +254,7 @@ class Graph:
         """Complete the DFS visit on the transposed graph"""
         for u in decreasingUF:
             if graphT.color[u] == "white":
-                graphT.DFSVisit(u)
+                graphT.DFS(u)
 
         StronglyConnected = []
         tree = []

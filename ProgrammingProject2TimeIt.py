@@ -158,7 +158,7 @@ class Graph:
         graphT = self.Transpose()
         for u in decreasingUF:
             if graphT.color[u] == "white":
-                graphT.DFSVisit(u)
+                graphT.DFS(u)
         StronglyConnected = []
         tree = []
         for i in range(len(graphT.pi)):
