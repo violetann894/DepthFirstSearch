@@ -96,6 +96,13 @@ class Graph:
         self.d = []
         self.f = []
         self.directed = directed
+        self.time = 0
+
+        for u in range(len(self.aList)):
+            self.color.append("white")
+            self.pi.append(None)
+            self.d.append(0)
+            self.f.append(0)
 
     """Creates an edge. If directed is true, only one direction will be added. If not, both directions will be added
         v1 - The first vertex that makes up the edge
@@ -127,47 +134,49 @@ class Graph:
 
     """Runs Depth First Search on the Graph object using s as the source
         s - Source vertex for DFS"""
-
     def DFS(self, s):
-
-        """This sets up the lists for the DFS search"""
-        for u in range(len(self.aList)):
-            self.color.append("white")
-            self.pi.append(None)
-            self.d.append(0)
-            self.f.append(0)
-
-        """This actually begins the DFS algorithm"""
         self.time = 0
         self.DFSVisit(s)
+
         for u in range(len(self.aList)):
             if self.color[u] == "white":
                 self.DFSVisit(u)
 
     """Visits the vertex and explores the connected vertices to see where the algorithm can move next"""
-
     def DFSVisit(self, u):
+
         self.time += 1
         self.d[u] = self.time
         self.color[u] = "grey"
+
         for v in self.aList[u]:
             if self.color[v] == "white":
                 self.pi[v] = u
                 self.DFSVisit(v)
+
         self.color[u] = "black"
         self.time += 1
         self.f[u] = self.time
 
     """Runs DFS on the list and then creates a linked list of objects sorted in topological order
+       s - The source vertex for DFS
        Returns: 
-            linkedList - The linked list of vertices with the head node being the slowest finishing vertex"""
-    def TopologicalSort(self):
-        self.DFS(0)
+            linkedList - The linked list of vertices with the head node being the slowest finishing vertex
+    """
+    def TopologicalSort(self,s):
+
+        """Run DFS"""
+        self.DFS(s)
+
+        """Create the stuff needed to create the decreasing finishing time list"""
         linkedList = None
         vertexAddedToList = []
         addedToList = 0
         smallestNumber = math.inf
         fastestVertex = None
+
+        """Run through the list of finishing times and add the fastest vertex for each run so that eventually the head
+        node of the linkedList is the slowest finishing vertex"""
         while addedToList < len(self.aList):
             for i in range(len(self.aList)):
                 if smallestNumber > self.f[i] and self.f[i] not in vertexAddedToList:
@@ -188,31 +197,49 @@ class Graph:
        Returns: 
             graphT - The transposed graph object"""
     def Transpose(self):
+
+        """Create the vertex list"""
         V = []
         for i in range(len(self.aList)):
             V.append(i)
+
+        """Create the edges list"""
         E = []
+
+        """Check to see if the graph is directed or not"""
         if self.directed:
+
+            """If it is directed, then just add v,u to the edge list without any additional checks"""
             for u in range(len(self.aList)):
                 for v in self.aList[u]:
                     E.append((v,u))
         else:
+            """If it is not directed, then we need to check for duplicates ((u,v) and (v,u) are considered to be the 
+            same edge in an undirected graph)"""
             for u in range(len(self.aList)):
                 for v in self.aList[u]:
                     if (u,v) not in E and (v,u) not in E:
                         E.append((v,u))
 
+        """Create the new transposed graph"""
         graphT = Graph(V, E, self.directed)
 
         return graphT
 
-    """SCC stands for Strongly Connected Components. """
-    def SCC(self):
-        self.DFS(0)
+    """SCC stands for Strongly Connected Components. Strongly Connected Components are vertices that have a path from 
+    u to v and a path from v to u. This algorithm checks to see if there are any Strongly connected components in the
+    graph by running DFS, creating a list of decreasing finishing times, finding G^T and running DFS on G^T with the 
+    list of decreasing finishing times in mind.
+        s - The source to use for DFS"""
+    def SCC(self, s):
+
+        """Run DFS"""
+        self.DFS(s)
 
         decreasingUF = []
         slowestVertex = -1
 
+        """Create the decreasing finishing times list for the next part of the method"""
         while len(decreasingUF) < len(self.aList):
             largestNumber = -1
             for i in range(len(self.aList)):
@@ -221,14 +248,18 @@ class Graph:
                     slowestVertex = i
             decreasingUF.append(slowestVertex)
 
+        """Transpose the graph"""
         graphT = self.Transpose()
-        graphT.DFS(decreasingUF[0])
+
+        """Complete the DFS visit on the transposed graph"""
         for u in decreasingUF:
             if graphT.color[u] == "white":
-                graphT.DFS(u)
+                graphT.DFSVisit(u)
 
         StronglyConnected = []
         tree = []
+
+        """Run through the predecessor list (pi) to see the trees that have formed from DFS"""
         for i in range(len(graphT.pi)):
             if graphT.pi[i] is None:
                 if len(tree) != 0:
@@ -242,29 +273,38 @@ class Graph:
         return StronglyConnected
 
 if __name__ == "__main__":
-    V = [0, 1, 2, 3]
-    E = [(0, 1), (0, 2), (1, 2), (1, 3), (2, 3)]
+    V = [0, 1, 2, 3, 4]
+    E = [(0, 1), (1, 2), (2, 0), (2, 3), (3, 4), (4, 3)]
 
     graph = Graph(V, E, True)
     graph.printGraph()
 
     print()
 
-    """graph.DFS(0)
+    """Output a run using DFS"""
+    graph.DFS(0)
     print(graph.color)
     print(graph.d)
     print(graph.f)
     print(graph.pi)
-    print()"""
+    print()
 
-    """
-    linkedList = graph.TopologicalSort()
+    """Output a run using topological sort"""
+    graphTop = Graph(V, E, True)
+
+    linkedList = graphTop.TopologicalSort(0)
+
+    print()
 
     print(graph.color)
     print("Discovery times: ", graph.d)
     print("Finishing times: ", graph.f)
 
     linkedList.printLinkedList()
-    """
 
-    print(graph.SCC())
+    print()
+
+    """Output a run using Strongly Connected Components"""
+    graphSCC = Graph(V, E, True)
+
+    print("Strongly connected components trees: ", graphSCC.SCC(0))
