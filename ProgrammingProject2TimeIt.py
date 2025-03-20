@@ -181,19 +181,19 @@ graph = Graph(V, E, True)
 graph.DFS(0)"""
 
     DFSLessVertices= """
-V = [0,1,2,3]
+V = [0, 1, 2, 3]
 E = [(0, 1), (0, 2), (1, 2), (1, 3), (2, 3)]
 graph = Graph(V, E, True)
 graph.DFS(0)"""
 
     topological="""
 V = [0, 1, 2, 3, 4]
-E = [(0, 1), (1, 2), (2, 0), (2, 3), (3, 4), (4, 3)]
+E = [(0, 2), (1, 2), (1, 3), (2, 3)]
 graph = Graph(V, E, True)
 graph.TopologicalSort(0)"""
 
     topologicalLessVertices= """
-V = [0,1,2,3]
+V = [0, 1, 2, 3]
 E = [(0, 1), (0, 2), (1, 2), (1, 3), (2, 3)]
 graph = Graph(V, E, True)
 graph.TopologicalSort(0)"""
@@ -205,7 +205,7 @@ graph = Graph(V, E, True)
 graph.SCC(0)"""
 
     SCCLessVertices= """
-V = [0,1,2,3]
+V = [0, 1, 2, 3]
 E = [(0, 1), (0, 2), (1, 2), (1, 3), (2, 3)]
 graph = Graph(V, E, True)
 graph.SCC(0)"""

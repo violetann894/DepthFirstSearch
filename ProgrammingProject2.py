@@ -290,21 +290,26 @@ if __name__ == "__main__":
     print()
 
     """Output a run using topological sort"""
+    V = [0, 1, 2, 3]
+    E = [(0, 1), (0, 2), (1, 2), (1, 3), (2, 3)]
+
     graphTop = Graph(V, E, True)
 
     linkedList = graphTop.TopologicalSort(0)
 
     print()
 
-    print(graph.color)
-    print("Discovery times: ", graph.d)
-    print("Finishing times: ", graph.f)
+    print(graphTop.color)
+    print("Discovery times: ", graphTop.d)
+    print("Finishing times: ", graphTop.f)
 
     linkedList.printLinkedList()
 
     print()
 
     """Output a run using Strongly Connected Components"""
+    V = [0, 1, 2, 3, 4]
+    E = [(0, 1), (1, 2), (2, 0), (2, 3), (3, 4), (4, 3)]
     graphSCC = Graph(V, E, True)
 
     print("Strongly connected components trees: ", graphSCC.SCC(0))
